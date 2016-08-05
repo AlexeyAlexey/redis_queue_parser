@@ -3,24 +3,34 @@ defmodule RedisQueueParser.SubSupervisor do
 
   def start_link(_) do
   	#{:ok, _pid} = Supervisor.start_link(__MODULE__, [])
-  	result = Supervisor.start_link(__MODULE__, [])
-    IO.puts "SubSupervisor:"
-    IO.inspect result
-  	result
+  	result = Supervisor.start_link(__MODULE__, [], name: :sub_supervisor)
+   
+    #Agent.start_link(fn -> List.new end, name: :sub_supervisor)
+    #Agent.start_link(fn -> [] end, name: :sub_supervisor_parser)
+  	
+    result
   end
-  def init(_) do
-  	#add redis processes
-  	#use poolboy
-  	# Here are my pool options
-    pool_options = [
-      name: {:local, :redis_parser_pool},
-      worker_module: RedisQueueParser.Parser,
-      size: 5,
-      max_overflow: 5
-    ]
 
-  	child_processes = [ :poolboy.child_spec(:redis_parser_pool, pool_options, []), worker(RedisQueueParser.RedisManager, [1]) ]
-  	#child_processes = [ worker(RedisQueueParser.RedisManager, [1]) ]
-  	supervise child_processes, strategy: :one_for_one
+  def init_parser(name) do
+    result = Supervisor.start_child(:sub_supervisor, [name])
+
+    save_name_in_sub_supervisor_parser(result, name)
+
+    result
+  end
+
+  def init(params) do
+    child_processes = [ worker(RedisQueueParser.SubSupervisorParser, []) ]
+
+  	supervise child_processes, strategy: :simple_one_for_one
+  end
+
+ 
+  defp save_name_in_sub_supervisor_parser({:ok, pid}, name) do
+    Agent.update(:sub_supervisor_parser, fn list_of_names -> [ name | list_of_names] end)
+  end
+
+  defp save_name_in_sub_supervisor_parser(_, _) do
+    
   end
 end
