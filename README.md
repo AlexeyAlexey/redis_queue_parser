@@ -1,5 +1,8 @@
 # RedisQueueParser
 
+#See develop branch
+#In development state
+
 **TODO: Add description**
 
 ## Installation
