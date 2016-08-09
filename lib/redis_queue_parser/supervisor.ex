@@ -22,7 +22,8 @@ defmodule RedisQueueParser.Supervisor do
       max_overflow: 0
     ]
 
-    child_processes = [ :poolboy.child_spec(:redis_pool, pool_options, []), worker(RedisQueueParser.ParsersManager, [1]) ]
+    child_processes = [ :poolboy.child_spec(:redis_pool, pool_options, []), worker(RedisQueueParser.ParsersManager, [1]),
+                        supervisor(RedisQueueParser.Repo, []) ]
   	supervise child_processes, strategy: :one_for_one
   end
 

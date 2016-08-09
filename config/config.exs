@@ -6,6 +6,13 @@ config :kernel,
   inet_dist_listen_min: 43518,
   inet_dist_listen_max: 43518 
 
+config :redis_queue_parser, RedisQueueParser.Repo,
+  adapter:  Ecto.Adapters.MySQL,
+  database: "redmine_clear_development",
+  username: "root",
+  password: "1828smile",
+  hostname: "localhost"
+
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
 # file won't be loaded nor affect the parent project. For this reason,

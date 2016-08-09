@@ -85,7 +85,7 @@ defmodule RedisQueueParser.Parser do
    %{}
   end
   defp write_to_db(res_json) do
-    
+    #RedisQueueParser.Repo.insert_all("action_controller_loggers", [ [status: 1]])
   end
 
   

@@ -188,3 +188,15 @@ iex(redis_queue_parser@127.0.0.1)69> :gproc.next({:l, :n}, {{:n, :l, {:sub_super
 {{:n, :l, {:sub_supervisor_parser, "queue_4"}}, :n}
 iex(redis_queue_parser@127.0.0.1)70> :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, "queue_5"}}, :n})
 :"$end_of_table"
+
+
+
+> RedisQueueParser.Repo.insert_all("users", [ [status: 1]])
+
+13:25:38.773 [debug] QUERY OK db=18.1ms
+INSERT INTO `users` (`status`) VALUES (?) [1]
+{1, nil}
+iex(redis_queue_parser@127.0.0.1)5> 
+
+
+
