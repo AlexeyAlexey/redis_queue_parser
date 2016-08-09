@@ -13,7 +13,7 @@ defmodule RedisQueueParser.ParsersManager do
   def init_parser(name) do
     result = Supervisor.start_child(:sub_supervisor, [name])
 
-    save_name_in_sub_supervisor_parser(result, name)
+    #save_name_in_sub_supervisor_parser(result, name)
 
     result
   end
@@ -56,6 +56,7 @@ defmodule RedisQueueParser.ParsersManager do
     # {:undefined, #PID<0.274.0>, :worker, [RedisQueueParser.Parser]}]
   end
 
+  #stop one parser
   def stop_parser_of(name_of_queue) do
     pid = :gproc.where({ :n, :l, {:sub_supervisor_parser, name_of_queue} })
     Supervisor.which_children(pid)
@@ -66,19 +67,37 @@ defmodule RedisQueueParser.ParsersManager do
   defp stop_first_child(nil) do
     {:ok, "can not find child"}
   end
-
   defp stop_first_child({_, pid, _, _}) do
     IO.inspect pid
     GenServer.cast(pid, :stop)
     #Process.send(pid, {:kjhkjjh})
   end
 
-  defp save_name_in_sub_supervisor_parser({:ok, pid}, name) do
-    Agent.update(:sub_supervisor_parser, fn list_of_names -> [ name | list_of_names] end)
+  def list_of_init_parsers() do
+    list_of_init_parsers({{:n, :l, {:sub_supervisor_parser, '_'}}, :n}, []) 
   end
 
-  defp save_name_in_sub_supervisor_parser(_, _) do
-    
+  #defp save_name_in_sub_supervisor_parser({:ok, pid}, name) do
+  #  Agent.update(:sub_supervisor_parser, fn list_of_names -> [ name | list_of_names] end)
+  #end
+
+  #defp save_name_in_sub_supervisor_parser(_, _) do
+  #  
+  #end
+
+  defp list_of_init_parsers({{:n, :l, {:sub_supervisor_parser, '_'}}, :n}, res) do
+    found = :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, '_'}}, :n})
+    list_of_init_parsers(found, [])
+  end
+  defp list_of_init_parsers({{:n, :l, {:sub_supervisor_parser, name}}, :n}, res ) do
+    found = :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, name}}, :n})
+    list_of_init_parsers(found, [name | res])
+  end
+  defp list_of_init_parsers(:"$end_of_table", res) do
+    res
+  end
+  defp list_of_init_parsers(_, res \\ []) do
+    res
   end
   #####
   # GenServer implementation

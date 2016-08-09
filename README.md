@@ -41,7 +41,7 @@ Nodes -> Connect to node -> node1@127.0.0.1
 in guest
 iex --name node1@127.0.0.1 --cookie 123  --erl "-config sys.config" -S mix
 
-
+iex --name node1@127.0.0.1 --cookie 123 
 
 
 
@@ -118,3 +118,73 @@ Supervisor.terminate_child(:sub_supervisor, pid_parent)
 3) RedisQueueParser.ParsersManager.stop_parser_of("queue_1")
 
 4) RedisQueueParser.ParsersManager.destroy_all_parsers_without_check_child("queue_1")
+
+5) RedisQueueParser.ParsersManager.list_of_init_parsers => ["queue_3", "queue_2", "queue_1"]
+  > RedisQueueParser.ParsersManager.list_of_init_parsers |> Enum.map(fn(el) -> { :n, :l, {:sub_supervisor_parser, el} } end) |> Enum.map(fn(el) -> :gproc.where(el) end)  [#PID<0.232.0>, #PID<0.230.0>, #PID<0.228.0>]
+
+
+
+
+
+:gproc.first({:l, :n})    
+{{:n, :l, {:sub_supervisor_parser}}, :n}
+
+
+> :gproc.lookup_values({:n, :l, {:sub_supervisor_parser}})
+[{#PID<0.208.0>, :undefined}]
+
+:gproc.last({:l, :n})
+{{:n, :l, {:sub_supervisor_parser, "queue_1"}}, :n}
+
+
+> :gproc.last({:l, :n})
+{{:n, :l, {:sub_supervisor_parser, "queue_1"}}, :n}
+iex(redis_queue_parser@127.0.0.1)8> :gproc.last({:l, :n})
+{{:n, :l, {:sub_supervisor_parser, "queue_2"}}, :n}
+iex(redis_queue_parser@127.0.0.1)9> :gproc.first({:l, :n})    
+{{:n, :l, {:sub_supervisor_parser, "queue_1"}}, :n}
+
+
+next(Context, K) 
+> :gproc.next({:l, :n}, {:l, :n, {}})      
+{:n, :l, {:sub_supervisor_parser, "queue_1"}}
+
+
+
+ :gproc.next({:l, :n}, :gproc.first({:l, :n}) )
+
+{{:n, :l, {:sub_supervisor_parser, "queue_2"}}, :n}
+iex(redis_queue_parser@127.0.0.1)44> :gproc.next({:l, :n}, :gproc.first({:l, :n}) )
+{{:n, :l, {:sub_supervisor_parser, "queue_2"}}, :n}
+iex(redis_queue_parser@127.0.0.1)45> :gproc.next({:l, :n}, :gproc.first({:l, :n}) )
+{{:n, :l, {:sub_supervisor_parser, "queue_2"}}, :n}
+
+
+
+> :gproc.next({:l, :n}, :gproc.first({:l, :n}) )                               
+{{:n, :l, {:sub_supervisor_parser, "queue_2"}}, :n}
+iex(redis_queue_parser@127.0.0.1)51> :gproc.next({:l, :n}, :gproc.first({:l, :n}) )
+{{:n, :l, {:sub_supervisor_parser, "queue_2"}}, :n}
+iex(redis_queue_parser@127.0.0.1)52> :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, "queue_2"}}, :n} )
+{{:n, :l, {:sub_supervisor_parser, "queue_3"}}, :n}
+iex(redis_queue_parser@127.0.0.1)53> :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, "queue_3"}}, :n} )
+{{:n, :l, {:sub_supervisor_parser, "queue_4"}}, :n}
+iex(redis_queue_parser@127.0.0.1)54> :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, "queue_3"}}, :n} )
+{{:n, :l, {:sub_supervisor_parser, "queue_4"}}, :n}
+iex(redis_queue_parser@127.0.0.1)55> :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, "queue_4"}}, :n} )
+:"$end_of_table"
+
+
+:gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, '_'}}, :n}) 
+{{:n, :l, {:sub_supervisor_parser, "queue_1"}}, :n}
+
+> :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, '_'}}, :n})    
+{{:n, :l, {:sub_supervisor_parser, "queue_1"}}, :n}
+iex(redis_queue_parser@127.0.0.1)67> :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, "queue_1"}}, :n})
+{{:n, :l, {:sub_supervisor_parser, "queue_2"}}, :n}
+iex(redis_queue_parser@127.0.0.1)68> :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, "queue_2"}}, :n})
+{{:n, :l, {:sub_supervisor_parser, "queue_3"}}, :n}
+iex(redis_queue_parser@127.0.0.1)69> :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, "queue_3"}}, :n})
+{{:n, :l, {:sub_supervisor_parser, "queue_4"}}, :n}
+iex(redis_queue_parser@127.0.0.1)70> :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, "queue_5"}}, :n})
+:"$end_of_table"

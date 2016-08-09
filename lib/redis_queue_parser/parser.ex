@@ -60,10 +60,8 @@ defmodule RedisQueueParser.Parser do
     handle_response( res )
     |> write_to_db
 
-    
-    
     next = check_message
-    IO.puts next
+    #IO.puts next
     read_from_queue(queue_named, next)
   end
 
