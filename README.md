@@ -104,14 +104,21 @@ start_new_parser
 > pid_parent = :gproc.where({:n, :l, {:sub_supervisor_parser, "queue_1"}}) 
 Supervisor.terminate_child(:sub_supervisor, pid_parent)
 
-
+'redis_queue_parser_manager'
 0.1) ~$ iex --name node1@127.0.0.1 --cookie 123
+0.1) iex --name node1@127.0.0.1 --cookie 123 -S mix
 0.2) Node.connect(:"redis_queue_parser@127.0.0.1") 
 0.3) Node.spawn(:"redis_queue_parser@127.0.0.1", fn -> RedisQueueParser.ParsersManager.stop_parser_of("queue_1") end)
 
 0) /redis_queue_parser$ iex -S mix
 
-1) RedisQueueParser.ParsersManager.init_parser("queue_1", fn l -> IO.inspect l end)
+
+Node.spawn(:"redis_queue_parser@127.0.0.1", fn -> RedisQueueParser.ParsersManager.init_parser("queue_1", function) end)
+Node.spawn(:"redis_queue_parser@127.0.0.1", fn -> RedisQueueParser.ParsersManager.start_new_parser("queue_1") end)  
+
+1) function =  fn l -> IO.inspect l end
+   RedisQueueParser.ParsersManager.init_parser("queue_1", ) 
+   
 
 2) RedisQueueParser.ParsersManager.start_new_parser("queue_1")
 
@@ -123,6 +130,30 @@ Supervisor.terminate_child(:sub_supervisor, pid_parent)
   > RedisQueueParser.ParsersManager.list_of_init_parsers |> Enum.map(fn(el) -> { :n, :l, {:sub_supervisor_parser, el} } end) |> Enum.map(fn(el) -> :gproc.where(el) end)  [#PID<0.232.0>, #PID<0.230.0>, #PID<0.228.0>]
 
 
+
+
+
+redis 
+  127.0.0.1:6379> RPUSH "queue_1" "{\"name\":\"process_action.action_controller\",\"payload\":{\"controller\":\"WelcomeController\",\"action\":\"index\",\"params\":{\"controller\":\"welcome\",\"action\":\"index\"},\"format\":\"html\",\"method\":\"GET\",\"path\":\"/\",\"status\":200,\"view_runtime\":1525.7584779999995,\"db_runtime\":642.8488560000003,\"user_id\":2,\"log_unique_id\":\"2163658047998db73fdf00059b931453100275\",\"remote_ip\":\"127.0.0.1\",\"request_user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36\",\"request_from_page\":\"\",\"session_id\":\"96cbc8ea2291fb7570cec367e137535e\",\"body_response\":\"\",\"request_headers\":\"\"},\"time\":\"2016-01-18T08:57:55+02:00\",\"transaction_id\":\"981019b65417085881c9\",\"end\":\"2016-01-18T08:57:58+02:00\",\"duration\":2669.970255}"
+
+
+
+"{\"name\":\"process_action.action_controller\",\"payload\":{\"controller\":\"WelcomeController\",\"action\":\"index\",\"params\":{\"controller\":\"welcome\",\"action\":\"index\"},\"format\":\"html\",\"method\":\"GET\",\"path\":\"/\",\"status\":200,\"view_runtime\":1525.7584779999995,\"db_runtime\":642.8488560000003,\"user_id\":2,\"log_unique_id\":\"2163658047998db73fdf00059b931453100275\",\"remote_ip\":\"127.0.0.1\",\"request_user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36\",\"request_from_page\":\"\",\"session_id\":\"96cbc8ea2291fb7570cec367e137535e\",\"body_response\":\"\",\"request_headers\":\"\"},\"time\":\"2016-01-18T08:57:55+02:00\",\"transaction_id\":\"981019b65417085881c9\",\"end\":\"2016-01-18T08:57:58+02:00\",\"duration\":2669.970255}"
+
+
+
+
+
+
+
+
+
+
+
+> Timex.parse("2016-01-18T08:57:55+02:00", "{ISO:Extended}")
+{:ok, #<DateTime(2016-01-18T08:57:55+02:00 Etc/GMT-2)>}
+iex(redis_queue_parser@127.0.0.1)2> Timex.parse("", "{ISO:Extended}")                         
+{:error, "Input datetime string cannot be empty!"}
 
 
 
@@ -200,3 +231,38 @@ iex(redis_queue_parser@127.0.0.1)5>
 
 
 
+
+
+json
+
+{:ok, date_time} = Timex.parse(json["time"], "{ISO:Extended}")
+date_time_str = DateTime.to_string Timezone.convert(date_time, "UTC")
+
+json_payload = json["payload"] |> Map.drop(["body_response", "request_headers"])
+
+json_db = Map.put(json, "payload", json_payload)
+
+[ json["name"], [ [log_unique_id: json["payload"]["log_unique_id"],
+                   user_id: json["payload"]["user_id"],
+                   session_id: json["payload"]["session_id"],
+                   request_user_agent: json["payload"]["request_user_agent"],
+                   request_headers: json["payload"]["request_headers"],
+                   request_from_page: json["payload"]["request_from_page"],
+                   controller: json["payload"]["controller"],
+                   action: json["payload"]["action"],
+                   status: json["payload"]["status"],
+                   start_time:  date_time_str, 
+                   remote_ip: json["payload"]["remote_ip"], 
+                   duration: json["duration"], 
+                   view_runtime: json["payload"]["view_runtime"],
+                   db_runtime: json["payload"]["db_runtime"],
+                   process: json_db,
+                   body_response: json["payload"]["body_response"]
+                  ]
+
+
+
+ ] 
+
+
+]

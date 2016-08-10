@@ -1,5 +1,6 @@
 defmodule RedisQueueParser.Parser do
   use GenServer
+  use Timex
 
   
   ####
@@ -42,13 +43,13 @@ defmodule RedisQueueParser.Parser do
     { :noreply, {queue_named, false, function_parser} }
   end
 
-  def handle_call(:read_from_queue, _form, {queue_named, continue_reading, function_parser}) do
-    #IO.puts "read_from_queue"
+  #def handle_call(:read_from_queue, _form, {queue_named, continue_reading, function_parser}) do
+  #  #IO.puts "read_from_queue"
     
-    read_from_queue(queue_named, true, function_parser)
-
-    { :reply, {queue_named, false, function_parser} }
-  end
+  #  read_from_queue(queue_named, true, function_parser)
+#
+  #  { :reply, {queue_named, false, function_parser} }
+  #end
   
   defp read_from_queue(queue_named, next, function_parser) when next == true do
 
@@ -58,7 +59,7 @@ defmodule RedisQueueParser.Parser do
 
     :poolboy.checkin(:redis_pool, redis_pid)
 
-    handle_response( res )
+    handle_response( res )    
     |> function_parser.()
     |> write_to_db
 
@@ -78,16 +79,18 @@ defmodule RedisQueueParser.Parser do
 
   def handle_response( res ) do 
     #return json
-    :jsx.decode(res)
-    |> Enum.into(%{})
+    res = :jsx.decode(res, [:return_maps])
+    #:jsx.decode(res)
+    #|> Enum.into(%{})
   end
 
   defp write_to_db( %{} ) do
    :timer.sleep(10000)
    %{}
   end
-  defp write_to_db(res_json) do
-    #RedisQueueParser.Repo.insert_all("action_controller_loggers", [ [status: 1]])
+  defp write_to_db(name_of_table_and_list_of_params) do
+    [name_of_table | list_of_params] = name_of_table_and_list_of_params
+    RedisQueueParser.Repo.insert_all(name_of_table, list_of_params)
   end
 
   

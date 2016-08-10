@@ -18,7 +18,7 @@ defmodule RedisQueueParser.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :exredis, :mariaex, :ecto, :poolboy, :gproc],
+    [applications: [:logger, :exredis, :mariaex, :ecto, :poolboy, :gproc, :timex],
      mod: {RedisQueueParser, []}]
   end
 
@@ -37,6 +37,7 @@ defmodule RedisQueueParser.Mixfile do
      { :mariaex, "~> 0.7.3" },
      { :ecto,    "~> 2.0.0" },
      { :poolboy, "~> 1.5"   },
-     { :gproc,   "~> 0.5.0" }]
+     { :gproc,   "~> 0.5.0" },
+     {:timex,    "~> 3.0"   }]
   end
 end
