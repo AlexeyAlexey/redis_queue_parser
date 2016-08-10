@@ -13,6 +13,14 @@ config :redis_queue_parser, RedisQueueParser.Repo,
   password: "1828smile",
   hostname: "localhost"
 
+config :redis_queue_parser, RedisQueueParser.Redis,
+  url: "redis://127.0.0.1:6379",
+  reconnect: :no_reconnect,
+  max_queue: :infinity
+  #url: "redis://user:password@host:1234/10",
+  #reconnect: :no_reconnect,
+  #max_queue: :infinity
+
 # This configuration is loaded before any dependency and is restricted
 # to this project. If another project depends on this project, this
 # file won't be loaded nor affect the parent project. For this reason,

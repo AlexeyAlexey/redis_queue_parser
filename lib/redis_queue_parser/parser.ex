@@ -10,8 +10,9 @@ defmodule RedisQueueParser.Parser do
   #  GenServer.start_link(__MODULE__, [], name: :queue_parser)
   #end
 
-  def start_link(queue_named) do
-  	{:ok, pid} = res = GenServer.start_link(__MODULE__, {queue_named, false})
+  def start_link(params) do
+    [queue_named, function_parser] = params
+  	{:ok, pid} = res = GenServer.start_link(__MODULE__, {queue_named, false, function_parser})
     IO.puts "start"
     #GenServer.cast(pid, :read_from_queue)
     res 
@@ -29,27 +30,27 @@ defmodule RedisQueueParser.Parser do
     { :noreply, state }
   end
 
-  def handle_call(:process_named, _from, {queue_named, read}) do
-    {:reply, {queue_named, read}, {queue_named, read} }
+  def handle_call(:process_named, _from, {queue_named, read, function_parser}) do
+    {:reply, {queue_named, read}, {queue_named, read, function_parser} }
   end
   
-  def handle_cast(:read_from_queue, {queue_named, continue_reading}) do
+  def handle_cast(:read_from_queue, {queue_named, continue_reading, function_parser}) do
     IO.puts "read_from_queue"
 
-    read_from_queue(queue_named, continue_reading)
+    read_from_queue(queue_named, true, function_parser)
 
-    { :noreply, {queue_named, false} }
+    { :noreply, {queue_named, false, function_parser} }
   end
 
-  def handle_call(:read_from_queue, _form, {queue_named, continue_reading}) do
-    IO.puts "read_from_queue"
+  def handle_call(:read_from_queue, _form, {queue_named, continue_reading, function_parser}) do
+    #IO.puts "read_from_queue"
     
-    read_from_queue(queue_named, true)
+    read_from_queue(queue_named, true, function_parser)
 
-    { :noreply, {queue_named, false} }
+    { :reply, {queue_named, false, function_parser} }
   end
   
-  defp read_from_queue(queue_named, next) when next == true do
+  defp read_from_queue(queue_named, next, function_parser) when next == true do
 
     redis_pid = :poolboy.checkout(:redis_pool)
 
@@ -58,14 +59,15 @@ defmodule RedisQueueParser.Parser do
     :poolboy.checkin(:redis_pool, redis_pid)
 
     handle_response( res )
+    |> function_parser.()
     |> write_to_db
 
     next = check_message
     #IO.puts next
-    read_from_queue(queue_named, next)
+    read_from_queue(queue_named, next, function_parser)
   end
 
-  defp read_from_queue(queue_named, next) when next == false do
+  defp read_from_queue(queue_named, next, function_parser) when next == false do
     child_pid = self()
     parent_pid = :gproc.where({ :n, :l, {:sub_supervisor_parser, queue_named} })
     #GenServer.cast(child_pid, :stop)

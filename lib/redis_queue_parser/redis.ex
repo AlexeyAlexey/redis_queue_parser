@@ -5,8 +5,8 @@ defmodule RedisQueueParser.Redis do
   ####
   #External API
 
-  def start_link(params) do
-  	{:ok, redis_client_pid} = Exredis.start_link("127.0.0.1", 6379)
+  def start_link(_params) do
+  	{:ok, redis_client_pid} = Exredis.start_link( Application.get_env(:redis_queue_parser, RedisQueueParser.Redis) )
 
   	GenServer.start_link(__MODULE__, {redis_client_pid})
   end

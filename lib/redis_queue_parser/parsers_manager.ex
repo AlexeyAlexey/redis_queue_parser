@@ -10,8 +10,8 @@ defmodule RedisQueueParser.ParsersManager do
   end
 
   
-  def init_parser(name) do
-    result = Supervisor.start_child(:sub_supervisor, [name])
+  def init_parser(name, function) do
+    result = Supervisor.start_child(:sub_supervisor, [name, function])
 
     #save_name_in_sub_supervisor_parser(result, name)
 
@@ -44,8 +44,10 @@ defmodule RedisQueueParser.ParsersManager do
     if sup_pid == :undefined do
       IO.puts "Can not find queue named #{name_of_queue}"
     else
-      {:ok, child_pid} = res = Supervisor.start_child(sup_pid, [name_of_queue])
-      GenServer.call(child_pid, :read_from_queue)
+      #{:ok, child_pid} = res = Supervisor.start_child(sup_pid, [name_of_queue])
+      {:ok, child_pid} = res = Supervisor.start_child(sup_pid, [])
+      #GenServer.call(child_pid, :read_from_queue)
+      GenServer.cast(child_pid, :read_from_queue)
     end
   end
 

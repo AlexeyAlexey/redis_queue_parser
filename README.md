@@ -111,7 +111,7 @@ Supervisor.terminate_child(:sub_supervisor, pid_parent)
 
 0) /redis_queue_parser$ iex -S mix
 
-1) RedisQueueParser.ParsersManager.init_parser("queue_1")
+1) RedisQueueParser.ParsersManager.init_parser("queue_1", fn l -> IO.inspect l end)
 
 2) RedisQueueParser.ParsersManager.start_new_parser("queue_1")
 

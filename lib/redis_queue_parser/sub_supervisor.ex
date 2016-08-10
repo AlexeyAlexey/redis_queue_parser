@@ -11,13 +11,13 @@ defmodule RedisQueueParser.SubSupervisor do
     result
   end
 
-  def init_parser(name) do
-    result = Supervisor.start_child(:sub_supervisor, [name])
-
-    save_name_in_sub_supervisor_parser(result, name)
-
-    result
-  end
+  #def init_parser(name, function) do
+  #  result = Supervisor.start_child(:sub_supervisor, [name, function])
+  #
+    #save_name_in_sub_supervisor_parser(result, name)
+  #
+  #  result
+  #end
 
   def init(params) do
     child_processes = [ worker(RedisQueueParser.SubSupervisorParser, []) ]
@@ -26,11 +26,11 @@ defmodule RedisQueueParser.SubSupervisor do
   end
 
  
-  defp save_name_in_sub_supervisor_parser({:ok, pid}, name) do
-    Agent.update(:sub_supervisor_parser, fn list_of_names -> [ name | list_of_names] end)
-  end
+  #defp save_name_in_sub_supervisor_parser({:ok, pid}, name) do
+  #  Agent.update(:sub_supervisor_parser, fn list_of_names -> [ name | list_of_names] end)
+  #end
 
-  defp save_name_in_sub_supervisor_parser(_, _) do
-    
-  end
+  #defp save_name_in_sub_supervisor_parser(_, _) do
+  #  
+  #end
 end

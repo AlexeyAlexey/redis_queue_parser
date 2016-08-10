@@ -2,10 +2,10 @@ defmodule RedisQueueParser.SubSupervisorParser do
   use Supervisor
   #use GenServer
 
-  def start_link(name_of_queue) do
+  def start_link(name_of_queue, function) do
   	#{:ok, _pid} = Supervisor.start_link(__MODULE__, [])
 
-  	result = Supervisor.start_link(__MODULE__, [name_of_queue], name: via_tuple(name_of_queue))
+  	result = Supervisor.start_link(__MODULE__, [name_of_queue, function], name: via_tuple(name_of_queue))
     
     result
   end
@@ -32,8 +32,7 @@ defmodule RedisQueueParser.SubSupervisorParser do
   #end
 
   def init(params) do
-    
-    child_processes = [ worker(RedisQueueParser.Parser, []) ]
+    child_processes = [ worker(RedisQueueParser.Parser, [params]) ]
   	supervise child_processes, strategy: :simple_one_for_one
   end
 
