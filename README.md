@@ -112,12 +112,15 @@ Supervisor.terminate_child(:sub_supervisor, pid_parent)
 
 0) /redis_queue_parser$ iex -S mix
 
-
+Node.connect(:"redis_queue_parser@127.0.0.1")
 Node.spawn(:"redis_queue_parser@127.0.0.1", fn -> RedisQueueParser.ParsersManager.init_parser("queue_1", function) end)
 Node.spawn(:"redis_queue_parser@127.0.0.1", fn -> RedisQueueParser.ParsersManager.start_new_parser("queue_1") end)  
 
+
+0) iex --name redis_queue_parser@127.0.0.1 --cookie 123 -S mix
+
 1) function =  fn l -> IO.inspect l end
-   RedisQueueParser.ParsersManager.init_parser("queue_1", ) 
+   RedisQueueParser.ParsersManager.init_parser("queue_1", function) 
    
 
 2) RedisQueueParser.ParsersManager.start_new_parser("queue_1")

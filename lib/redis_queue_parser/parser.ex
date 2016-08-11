@@ -14,8 +14,8 @@ defmodule RedisQueueParser.Parser do
   def start_link(params) do
     [queue_named, function_parser] = params
   	{:ok, pid} = res = GenServer.start_link(__MODULE__, {queue_named, false, function_parser})
-    IO.puts "start"
-    #GenServer.cast(pid, :read_from_queue)
+    
+    GenServer.cast(pid, :read_from_queue)
     res 
   end
   

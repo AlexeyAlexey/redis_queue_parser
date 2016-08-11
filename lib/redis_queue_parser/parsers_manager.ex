@@ -18,6 +18,19 @@ defmodule RedisQueueParser.ParsersManager do
     result
   end
 
+  def start_new_parser(name_of_queue) do
+    sup_pid = :gproc.where({ :n, :l, {:sub_supervisor_parser, name_of_queue} })
+    if sup_pid == :undefined do
+      {:error, "Can not find queue named #{name_of_queue}"}
+    else
+      #{:ok, child_pid} = res = Supervisor.start_child(sup_pid, [name_of_queue])
+      {:ok, child_pid} = res = Supervisor.start_child(sup_pid, [])
+      #GenServer.call(child_pid, :read_from_queue)
+      #GenServer.cast(child_pid, :read_from_queue)
+      res
+    end
+  end
+
   def destroy_all_parsers_without_check_child(name_of_queue) do
     sup_pid = :gproc.where({ :n, :l, {:sub_supervisor_parser, name_of_queue} })
     if sup_pid == :undefined do
@@ -38,18 +51,7 @@ defmodule RedisQueueParser.ParsersManager do
   #defp info_about_child(nil) do
   #  IO.puts "Empty"
   #end 
-
-  def start_new_parser(name_of_queue) do
-    sup_pid = :gproc.where({ :n, :l, {:sub_supervisor_parser, name_of_queue} })
-    if sup_pid == :undefined do
-      IO.puts "Can not find queue named #{name_of_queue}"
-    else
-      #{:ok, child_pid} = res = Supervisor.start_child(sup_pid, [name_of_queue])
-      {:ok, child_pid} = res = Supervisor.start_child(sup_pid, [])
-      #GenServer.call(child_pid, :read_from_queue)
-      GenServer.cast(child_pid, :read_from_queue)
-    end
-  end
+ 
 
   def list_of_parsers_of(name_of_queue) do
     pid = :gproc.where({ :n, :l, {:sub_supervisor_parser, name_of_queue} })
@@ -109,8 +111,6 @@ defmodule RedisQueueParser.ParsersManager do
   def test_parser do
     #use Timex
     fn (json) ->
-      
-
       #json_str = "{\"name\":\"process_action.action_controller\",\"payload\":{\"controller\":\"WelcomeController\",\"action\":\"index\",\"params\":{\"controller\":\"welcome\",\"action\":\"index\"},\"format\":\"html\",\"method\":\"GET\",\"path\":\"/\",\"status\":200,\"view_runtime\":1525.7584779999995,\"db_runtime\":642.8488560000003,\"user_id\":2,\"log_unique_id\":\"2163658047998db73fdf00059b931453100275\",\"remote_ip\":\"127.0.0.1\",\"request_user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36\",\"request_from_page\":\"\",\"session_id\":\"96cbc8ea2291fb7570cec367e137535e\",\"body_response\":\"\",\"request_headers\":\"\"},\"time\":\"2016-01-18T08:57:55+02:00\",\"transaction_id\":\"981019b65417085881c9\",\"end\":\"2016-01-18T08:57:58+02:00\",\"duration\":2669.970255}"
       
       #json = :jsx.decode(json_str, [:return_maps])

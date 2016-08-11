@@ -5,15 +5,11 @@ defmodule RedisQueueParser.Mixfile do
     [app: :redis_queue_parser,
      version: "0.1.0",
      elixir: "~> 1.3",
-     escript: escript,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps()]
   end
 
-  def escript do
-    [main_module: RedisQueueParser.Cli]
-  end
   # Configuration for the OTP application
   #
   # Type "mix help compile.app" for more information
@@ -38,6 +34,6 @@ defmodule RedisQueueParser.Mixfile do
      { :ecto,    "~> 2.0.0" },
      { :poolboy, "~> 1.5"   },
      { :gproc,   "~> 0.5.0" },
-     {:timex,    "~> 3.0"   }]
+     { :timex,   "~> 3.0"   }]
   end
 end
