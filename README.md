@@ -22,6 +22,10 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
     end
     ```
 
+
+http://elixir-lang.org/docs/stable/iex/IEx.html
+
+
     
 #in host
  epmd -kill
@@ -108,29 +112,30 @@ Supervisor.terminate_child(:sub_supervisor, pid_parent)
 0.1) ~$ iex --name node1@127.0.0.1 --cookie 123
 0.1) iex --name node1@127.0.0.1 --cookie 123 -S mix
 0.2) Node.connect(:"redis_queue_parser@127.0.0.1") 
-0.3) Node.spawn(:"redis_queue_parser@127.0.0.1", fn -> RedisQueueParser.ParsersManager.stop_parser_of("queue_1") end)
+0.3) Node.spawn(:"redis_queue_parser@127.0.0.1", fn -> RedisQueueParser.Manager.stop_parser_of("queue_1") end)
 
 0) /redis_queue_parser$ iex -S mix
 
 Node.connect(:"redis_queue_parser@127.0.0.1")
-Node.spawn(:"redis_queue_parser@127.0.0.1", fn -> RedisQueueParser.ParsersManager.init_parser("queue_1", function) end)
-Node.spawn(:"redis_queue_parser@127.0.0.1", fn -> RedisQueueParser.ParsersManager.start_new_parser("queue_1") end)  
+Node.spawn(:"redis_queue_parser@127.0.0.1", fn -> RedisQueueParser.Manager.init_parser("queue_1", function) end)
+Node.spawn(:"redis_queue_parser@127.0.0.1", fn -> RedisQueueParser.Manager.start_new_parser("queue_1") end)  
 
-
+http://elixir-lang.org/docs/stable/iex/IEx.html
+iex --name node1@127.0.0.1 --cookie 123 --remsh redis_queue_parser@127.0.0.1
 0) iex --name redis_queue_parser@127.0.0.1 --cookie 123 -S mix
 
 1) function =  fn l -> IO.inspect l end
-   RedisQueueParser.ParsersManager.init_parser("queue_1", function) 
+   RedisQueueParser.Manager.init_parser("queue_1", function) 
    
 
-2) RedisQueueParser.ParsersManager.start_new_parser("queue_1")
+2) RedisQueueParser.Manager.start_new_parser("queue_1")
 
-3) RedisQueueParser.ParsersManager.stop_parser_of("queue_1")
+3) RedisQueueParser.Manager.stop_parser_of("queue_1")
 
-4) RedisQueueParser.ParsersManager.destroy_all_parsers_without_check_child("queue_1")
+4) RedisQueueParser.Manager.destroy_all_parsers_without_check_child("queue_1")
 
-5) RedisQueueParser.ParsersManager.list_of_init_parsers => ["queue_3", "queue_2", "queue_1"]
-  > RedisQueueParser.ParsersManager.list_of_init_parsers |> Enum.map(fn(el) -> { :n, :l, {:sub_supervisor_parser, el} } end) |> Enum.map(fn(el) -> :gproc.where(el) end)  [#PID<0.232.0>, #PID<0.230.0>, #PID<0.228.0>]
+5) RedisQueueParser.Manager.list_of_init_parsers => ["queue_3", "queue_2", "queue_1"]
+  > RedisQueueParser.Manager.list_of_init_parsers |> Enum.map(fn(el) -> { :n, :l, {:sub_supervisor_parser, el} } end) |> Enum.map(fn(el) -> :gproc.where(el) end)  [#PID<0.232.0>, #PID<0.230.0>, #PID<0.228.0>]
 
 
 

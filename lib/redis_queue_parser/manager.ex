@@ -1,4 +1,4 @@
-defmodule RedisQueueParser.ParsersManager do
+defmodule RedisQueueParser.Manager  do
   use GenServer
 
   import Supervisor.Spec
@@ -153,3 +153,4 @@ defmodule RedisQueueParser.ParsersManager do
   
 
 end
+
