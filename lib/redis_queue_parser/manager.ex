@@ -4,14 +4,14 @@ defmodule RedisQueueParser.Manager  do
   import Supervisor.Spec
 
   def start_link(params) do    
-    Agent.start_link(fn -> [] end, name: :sub_supervisor_parser)
+    #Agent.start_link(fn -> [] end, name: :sub_supervisor_parser)
 
   	GenServer.start_link(__MODULE__, {params}, name: __MODULE__)
   end
 
   
   def init_parser(name, function) do
-    result = Supervisor.start_child(:sub_supervisor, [name, function])
+    result = Supervisor.start_child(:sub_supervisor_parsers, [name, function])
 
     #save_name_in_sub_supervisor_parser(result, name)
 
@@ -36,7 +36,7 @@ defmodule RedisQueueParser.Manager  do
     if sup_pid == :undefined do
       IO.puts "Can not find queue named #{name_of_queue}"
     else
-      Supervisor.terminate_child(:sub_supervisor, sup_pid)
+      Supervisor.terminate_child(:sub_supervisor_parsers, sup_pid)
     end
   end
 
