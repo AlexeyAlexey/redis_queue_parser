@@ -3,9 +3,7 @@ defmodule RedisQueueParser.Supervisor do
 
   def start_link(_params) do
     result = {:ok, sup} = Supervisor.start_link(__MODULE__, [])
-    IO.puts "Supervisor:"
-    IO.inspect sup
-    start_workers(sup, [])#
+    start_workers(sup, [])
     result
   end
   def start_workers(sup, _params) do

@@ -20,15 +20,12 @@ defmodule RedisQueueParser.SubSupervisorParser do
   end
 
   #def handle_call(:start_new_parser, _from, state) do
-    #{:state, {:via, :gproc, {:n, :l, {:sub_supervisor_parser, "queue_1"}
+  #  {:state, {:via, :gproc, {:n, :l, {:sub_supervisor_parser, "queue_1"}
   #  pid = self()
-    #IO.inspect state
-  #  IO.puts "start_new_parser"
+  #  res = Supervisor.start_child(pid, [name_of_queue])
 
-    #res = Supervisor.start_child(pid, [name_of_queue])
-
-    #{:reply, res, [name_of_queue] }
-   # {:reply, "res", state }
+  #  {:reply, res, [name_of_queue] }
+  #  {:reply, "res", state }
   #end
 
   def init(params) do

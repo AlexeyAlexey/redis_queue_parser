@@ -44,14 +44,6 @@ defmodule RedisQueueParser.Manager  do
     pid = :gproc.where({ :n, :l, {:sub_supervisor_parser, name_of_queue} })
     Supervisor.which_children(pid) 
   end
-  
-  #defp info_about_child({_, pid, _, _}) do
-  #  IO.inspect Process.info(pid)
-  #end 
-  #defp info_about_child(nil) do
-  #  IO.puts "Empty"
-  #end 
- 
 
   def list_of_parsers_of(name_of_queue) do
     pid = :gproc.where({ :n, :l, {:sub_supervisor_parser, name_of_queue} })
@@ -72,7 +64,6 @@ defmodule RedisQueueParser.Manager  do
     {:ok, "can not find child"}
   end
   defp stop_first_child({_, pid, _, _}) do
-    IO.inspect pid
     GenServer.cast(pid, :stop)
     #Process.send(pid, {:kjhkjjh})
   end
@@ -80,14 +71,6 @@ defmodule RedisQueueParser.Manager  do
   def list_of_init_parsers() do
     list_of_init_parsers({{:n, :l, {:sub_supervisor_parser, '_'}}, :n}, []) 
   end
-
-  #defp save_name_in_sub_supervisor_parser({:ok, pid}, name) do
-  #  Agent.update(:sub_supervisor_parser, fn list_of_names -> [ name | list_of_names] end)
-  #end
-
-  #defp save_name_in_sub_supervisor_parser(_, _) do
-  #  
-  #end
 
   defp list_of_init_parsers({{:n, :l, {:sub_supervisor_parser, '_'}}, :n}, _res) do
     found = :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, '_'}}, :n})
@@ -105,8 +88,6 @@ defmodule RedisQueueParser.Manager  do
   end
   #####
   # GenServer implementation
-
-
 
   def test_parser do
     use Timex
