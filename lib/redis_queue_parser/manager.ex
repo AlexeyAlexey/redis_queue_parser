@@ -1,7 +1,7 @@
 defmodule RedisQueueParser.Manager  do
   use GenServer
 
-  import Supervisor.Spec
+  #import Supervisor.Spec
 
   def start_link(params) do    
     #Agent.start_link(fn -> [] end, name: :sub_supervisor_parser)
@@ -89,7 +89,7 @@ defmodule RedisQueueParser.Manager  do
   #  
   #end
 
-  defp list_of_init_parsers({{:n, :l, {:sub_supervisor_parser, '_'}}, :n}, res) do
+  defp list_of_init_parsers({{:n, :l, {:sub_supervisor_parser, '_'}}, :n}, _res) do
     found = :gproc.next({:l, :n}, {{:n, :l, {:sub_supervisor_parser, '_'}}, :n})
     list_of_init_parsers(found, [])
   end
@@ -100,7 +100,7 @@ defmodule RedisQueueParser.Manager  do
   defp list_of_init_parsers(:"$end_of_table", res) do
     res
   end
-  defp list_of_init_parsers(_, res \\ []) do
+  defp list_of_init_parsers(_, res) do
     res
   end
   #####
@@ -109,7 +109,7 @@ defmodule RedisQueueParser.Manager  do
 
 
   def test_parser do
-    #use Timex
+    use Timex
     fn (json) ->
       #json_str = "{\"name\":\"process_action.action_controller\",\"payload\":{\"controller\":\"WelcomeController\",\"action\":\"index\",\"params\":{\"controller\":\"welcome\",\"action\":\"index\"},\"format\":\"html\",\"method\":\"GET\",\"path\":\"/\",\"status\":200,\"view_runtime\":1525.7584779999995,\"db_runtime\":642.8488560000003,\"user_id\":2,\"log_unique_id\":\"2163658047998db73fdf00059b931453100275\",\"remote_ip\":\"127.0.0.1\",\"request_user_agent\":\"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36\",\"request_from_page\":\"\",\"session_id\":\"96cbc8ea2291fb7570cec367e137535e\",\"body_response\":\"\",\"request_headers\":\"\"},\"time\":\"2016-01-18T08:57:55+02:00\",\"transaction_id\":\"981019b65417085881c9\",\"end\":\"2016-01-18T08:57:58+02:00\",\"duration\":2669.970255}"
       
@@ -153,4 +153,3 @@ defmodule RedisQueueParser.Manager  do
   
 
 end
-
