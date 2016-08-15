@@ -26,22 +26,17 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
     end
     ```
 
-
-http://elixir-lang.org/docs/stable/iex/IEx.html
-
-
-    
-#in host
+On host
 epmd -kill
 
 epmd -daemon
 
-#in host mashin (https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding)(https://mfeckie.github.io/Remote-Profiling-Elixir-Over-SSH/)
+On host mashin (https://help.ubuntu.com/community/SSH/OpenSSH/PortForwarding)(https://mfeckie.github.io/Remote-Profiling-Elixir-Over-SSH/)
 
-#ssh -N -L 43518:localhost:43518 -L 4369:localhost:4369 vagrant@192.168.55.57
+ssh -N -L 43518:localhost:43518 -L 4369:localhost:4369 vagrant@192.168.55.57
 
-#in host
-# erl -name node2@192.168.55.57 -setcookie 123 -run observer
+On host
+erl -name node2@192.168.55.57 -setcookie 123 -run observer
 
 
 
@@ -51,9 +46,6 @@ elixir --detached -S mix run (http://stackoverflow.com/questions/24039245/how-do
 
 (https://github.com/bitwalker/exrm)
 (https://github.com/phoenixframework/phoenix/issues/1041)
-
-
-
 
 
 
@@ -85,5 +77,10 @@ iex --name node1@127.0.0.1 --cookie 123 --remsh redis_queue_parser@127.0.0.1
 5) RedisQueueParser.Manager.list_of_init_parsers => ["queue_3", "queue_2", "queue_1"]
 
 
+
+
+iex --name redis_queue_parser@127.0.0.1 --cookie 123  -S mix run --no-halt
+
+elixir --detached --name redis_queue_parser@127.0.0.1 --cookie 123 -S mix run --no-halt
 
 

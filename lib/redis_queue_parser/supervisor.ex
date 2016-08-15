@@ -13,11 +13,12 @@ defmodule RedisQueueParser.Supervisor do
   end
   
   def init(_) do
+    redis = Application.get_env(:redis_queue_parser, RedisQueueParser.Supervisor)
     pool_options = [
       name: {:local, :redis_pool},
       worker_module: RedisQueueParser.Redis,
-      size: 5,
-      max_overflow: 0
+      size:          redis[:redis_pool][:size],
+      max_overflow:  redis[:redis_pool][:max_overflow]
     ]
 
     child_processes = [ :poolboy.child_spec(:redis_pool, pool_options, []), worker(RedisQueueParser.Manager, [1]),
